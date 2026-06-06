@@ -242,7 +242,7 @@ export function Checkout() {
             <CardContent>
 
               <div className="space-y-3">
-                {console.log("cart", cart)}
+            
 
                 {cart.map(
                   (

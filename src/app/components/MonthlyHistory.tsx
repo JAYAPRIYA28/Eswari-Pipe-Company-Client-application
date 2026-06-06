@@ -70,7 +70,7 @@ async function checkAdminAccess() {
   }
 }
 
-  console.log("loading out", loading)
+
 
  async function loadMonthlyHistory() {
   try {
@@ -81,7 +81,7 @@ async function checkAdminAccess() {
       selectedYear
     );
 
-    console.log("Monthly History Response:", data);
+  
 
     if (Array.isArray(data)) {
       setOrders(data);

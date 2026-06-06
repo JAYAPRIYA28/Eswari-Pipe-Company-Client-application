@@ -61,7 +61,7 @@ export function AdminDashboard() {
         .reduce((sum: number, o: any) => sum + (o.total_amount || 0), 0);
 
 
-      console.log("orders", orders, ordersData, totalRevenue);
+    
 
       setStats({
         totalProducts: products.length,

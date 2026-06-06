@@ -177,7 +177,7 @@ function calculateGrandTotal() {
       return;
     }
 
-    console.log("user", user);
+  
 
     setSubmitting(true);
     try {
@@ -219,7 +219,7 @@ if (Number(pendingAmount) > grandTotal) {
 
       const data = await orderApi.create(orderData);
 
-      console.log("data", data)
+
       
       // Generate and download invoice
     generateInvoicePDF({
@@ -376,7 +376,7 @@ if (Number(pendingAmount) > grandTotal) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
   <Label>Category</Label>
-   {console.log("items", items)}
+
   <Select
     value={item.category}
     onValueChange={(value) => {

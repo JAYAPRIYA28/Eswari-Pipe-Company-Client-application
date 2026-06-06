@@ -133,7 +133,7 @@ export const authService = {
 
         options: {
           redirectTo:
-            "http://localhost:5173",
+            "https://eswari-pipe-company-client-applicat.vercel.app",
         },
       });
 

@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 import { Package, ShoppingCart } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useCart } from './CardContext';
+import { useNavigate } from 'react-router';
+import { authService } from '../utils/auth';
 
 export function Products() {
   const [products, setProducts] = useState<any[]>([]);
@@ -20,6 +22,8 @@ export function Products() {
 
   const [selectedCategory, setSelectedCategory] =
   useState("all");
+
+  const navigate = useNavigate();
 
   const filteredProducts =
   selectedCategory === "all"
@@ -290,13 +294,25 @@ export function Products() {
                   <Button
                     className="w-full bg-orange-600 hover:bg-orange-700"
                     disabled={product.stock <= 0}
-                    onClick={() => {
-                      addToCart(product);
+                   onClick={async () => {
+  const currentUser =
+    await authService.getCurrentUser();
 
-                      toast.success(
-                        `${product.name} added to cart`
-                      );
-                    }}
+  if (!currentUser) {
+    toast.error(
+      'Please sign up or login to add items to cart'
+    );
+
+    navigate('/signup');
+    return;
+  }
+
+  addToCart(product);
+
+  toast.success(
+    `${product.name} added to cart`
+  );
+}}
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
 

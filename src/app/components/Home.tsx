@@ -20,7 +20,7 @@ export function Home() {
         await authService
           .handleOAuthLogin();
 
-      console.log("OAuth User", user);
+
 
       if (!user) {
         return;

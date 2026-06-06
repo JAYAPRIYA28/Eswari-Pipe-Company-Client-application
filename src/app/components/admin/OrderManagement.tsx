@@ -113,7 +113,7 @@ export function OrderManagement({ onStatsUpdate }: Props) {
   }
 
   async function handleGenerateInvoice(order: any) {
-    console.log("order test", order)
+
     generateInvoicePDF({...order, gstPercentage: order.gst_percentage || 0, sgstPercentage: order.sgst_percentage || 0, paidAmount: order.paid_amount || 0, pendingAmount: order.pending_amount || 0})
   
     toast.success('Invoice downloaded');

@@ -33,7 +33,7 @@ export function ProductDetail() {
   async function loadProduct() {
     try {
       const data = await productApi.getById(id!);
-      console.log("data", data)
+     
       setProduct(data);
     } catch (error: any) {
       toast.error('Failed to load product');

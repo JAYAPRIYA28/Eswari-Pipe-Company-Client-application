@@ -49,7 +49,7 @@ export function ProductManagement({ onStatsUpdate }: Props) {
   async function loadProducts() {
     try {
       const data = await productApi.getAll();
-      console.log("data", data)
+      
       setProducts(data || []);
     } catch (error) {
       toast.error('Failed to load products');
@@ -325,7 +325,7 @@ export function ProductManagement({ onStatsUpdate }: Props) {
           </DialogContent>
         </Dialog>
       </div>
-      {console.log("products", products)}
+   
 
       {products.length === 0 ? (
         <Card>
