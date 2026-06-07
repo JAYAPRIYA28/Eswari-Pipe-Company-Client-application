@@ -2,8 +2,8 @@ import { authService } from './auth';
 
 // const API_BASE = import.meta.env.VITE_API_URL;
 
-// const API_BASE = "https://eswari-pipe-company-server-application.onrender.com";
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://eswari-pipe-company-server-application.onrender.com";
+// const API_BASE = "http://localhost:3000";
 
 async function fetchApi(
   endpoint: string,
