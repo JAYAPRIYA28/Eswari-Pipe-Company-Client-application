@@ -23,7 +23,7 @@ export function Checkout() {
 
   const { cart, clearCart } = useCart();
 
-  console.log("Checkout Cart:", cart);
+ 
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -117,7 +117,7 @@ deliveryStatus: "notAssigned",
 
      const data = await orderApi.create(orderData);
 
-     console.log("Order API Response:", data);
+
 
 generateInvoicePDF({
   ...data,
@@ -199,7 +199,7 @@ function calculatePaidAmount() {
   );
 }
 
-console.log("Cart Data:", cart);
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
 

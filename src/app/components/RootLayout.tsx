@@ -316,26 +316,59 @@ export function RootLayout() {
 
             {/* MOBILE MENU BUTTON */}
 
-            <button
-              onClick={() =>
-                setMobileMenuOpen(
-                  !mobileMenuOpen
-                )
-              }
-              className="md:hidden p-2"
-            >
+           <div className="md:hidden flex items-center gap-2">
 
-              {mobileMenuOpen ? (
+  {/* Mobile Cart */}
 
-                <X className="h-6 w-6" />
+  <Link to="/cart">
 
-              ) : (
+    <Button
+      variant="outline"
+      size="sm"
+      className="relative"
+    >
+      <ShoppingCart className="h-5 w-5" />
 
-                <Menu className="h-6 w-6" />
+      {totalItems > 0 && (
+        <span
+          className="
+            absolute
+            -top-2
+            -right-2
+            bg-orange-600
+            text-white
+            text-xs
+            rounded-full
+            min-w-[20px]
+            h-5
+            flex
+            items-center
+            justify-center
+          "
+        >
+          {totalItems}
+        </span>
+      )}
+    </Button>
 
-              )}
+  </Link>
 
-            </button>
+  {/* Menu Button */}
+
+  <button
+    onClick={() =>
+      setMobileMenuOpen(!mobileMenuOpen)
+    }
+    className="p-2"
+  >
+    {mobileMenuOpen ? (
+      <X className="h-6 w-6" />
+    ) : (
+      <Menu className="h-6 w-6" />
+    )}
+  </button>
+
+</div>
 
           </div>
 
@@ -371,7 +404,7 @@ export function RootLayout() {
 
               {/* MOBILE CART */}
 
-              <Link
+              {/* <Link
                 to="/cart"
                 onClick={() =>
                   setMobileMenuOpen(false)
@@ -413,7 +446,7 @@ export function RootLayout() {
 
                 </Button>
 
-              </Link>
+              </Link> */}
 
               {/* USER */}
 
