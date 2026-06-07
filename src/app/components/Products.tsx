@@ -307,6 +307,8 @@ export function Products() {
     return;
   }
 
+ 
+
   addToCart(product);
 
   toast.success(

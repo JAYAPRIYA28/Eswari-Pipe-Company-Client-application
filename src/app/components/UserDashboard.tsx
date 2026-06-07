@@ -20,6 +20,91 @@ export function UserDashboard() {
     loadOrders();
   }, []);
 
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const [fromDate, setFromDate] = useState("");
+const [toDate, setToDate] = useState("");
+
+  const statusConfig: Record<
+  string,
+  { variant: any; label: string; color: string }
+> = {
+  pending_approval: {
+    variant: "default",
+    label: "Pending Approval",
+    color: "bg-yellow-100 text-yellow-800",
+  },
+
+  partial_paid: {
+    variant: "default",
+    label: "Partial Paid",
+    color: "bg-orange-100 text-orange-800",
+  },
+
+  paid: {
+    variant: "default",
+    label: "Paid",
+    color: "bg-green-100 text-green-800",
+  },
+
+  approved_payment_pending: {
+    variant: "default",
+    label: "Payment Pending",
+    color: "bg-blue-100 text-blue-800",
+  },
+
+  admin_approved: {
+    variant: "default",
+    label: "Approved",
+    color: "bg-green-100 text-green-800",
+  },
+
+  assigned_for_delivery: {
+    variant: "default",
+    label: "Out for Delivery",
+    color: "bg-purple-100 text-purple-800",
+  },
+
+  delivered: {
+    variant: "default",
+    label: "Delivered",
+    color: "bg-green-100 text-green-800",
+  },
+
+  completed: {
+    variant: "default",
+    label: "Completed",
+    color: "bg-green-100 text-green-800",
+  },
+
+  delivery_cancelled: {
+    variant: "destructive",
+    label: "Cancelled",
+    color: "bg-red-100 text-red-800",
+  },
+};
+
+const filteredOrders = orders.filter((order) => {
+  const orderDate = new Date(order.created_at);
+
+  const statusMatch =
+    statusFilter === "all"
+      ? true
+      : order.status === statusFilter;
+
+  const fromMatch = fromDate
+    ? orderDate >= new Date(fromDate)
+    : true;
+
+  const toMatch = toDate
+    ? orderDate <= new Date(
+        `${toDate}T23:59:59`
+      )
+    : true;
+
+  return statusMatch && fromMatch && toMatch;
+});
+
   async function checkAuth() {
     try {
       const currentUser = await authService.getCurrentUser();
@@ -37,8 +122,8 @@ export function UserDashboard() {
     try {
       const data = await orderApi.getAll();
       // Sort by newest first
-      const sortedOrders = (data.orders || []).sort((a: any, b: any) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      const sortedOrders = (data || []).sort((a: any, b: any) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
       setOrders(sortedOrders);
     } catch (error) {
@@ -48,27 +133,31 @@ export function UserDashboard() {
     }
   }
 
-  function getStatusBadge(status: string) {
-    const statusConfig: Record<string, { variant: any; label: string; color: string }> = {
-      'pending_approval': { variant: 'default', label: 'Pending Approval', color: 'bg-yellow-100 text-yellow-800' },
-      'approved_payment_pending': { variant: 'default', label: 'Payment Pending', color: 'bg-blue-100 text-blue-800' },
-      'admin_approved': { variant: 'default', label: 'Approved', color: 'bg-green-100 text-green-800' },
-      'paid': { variant: 'default', label: 'Paid', color: 'bg-green-100 text-green-800' },
-      'assigned_for_delivery': { variant: 'default', label: 'Out for Delivery', color: 'bg-purple-100 text-purple-800' },
-      'delivered': { variant: 'default', label: 'Delivered', color: 'bg-green-100 text-green-800' },
-      'delivery_cancelled': { variant: 'destructive', label: 'Delivery Cancelled', color: 'bg-red-100 text-red-800' },
-      'refunded': { variant: 'secondary', label: 'Refunded', color: 'bg-gray-100 text-gray-800' },
-      'completed': { variant: 'default', label: 'Completed', color: 'bg-green-100 text-green-800' },
+  
+
+ function getStatusBadge(status: string) {
+  const config =
+    statusConfig[status] || {
+      variant: "secondary",
+      label: status,
+      color: "bg-gray-100 text-gray-800",
     };
 
-    const config = statusConfig[status] || { variant: 'secondary', label: status, color: 'bg-gray-100 text-gray-800' };
-    return <Badge className={config.color}>{config.label}</Badge>;
-  }
+  return (
+    <Badge className={config.color}>
+      {config.label}
+    </Badge>
+  );
+}
+
 
   function handleGenerateInvoice(order: any) {
-    generateInvoicePDF(order);
+      generateInvoicePDF({...order, gstPercentage: order.gst_percentage || 0, sgstPercentage: order.sgst_percentage || 0, paidAmount: order.paid_amount || 0, pendingAmount: order.pending_amount || 0, user_id: order.user_id || order.user_id || order.id})
+  
     toast.success('Invoice downloaded');
   }
+
+  
 
   if (loading) {
     return (
@@ -98,11 +187,11 @@ export function UserDashboard() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">Partial Paid</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {orders.filter(o => o.status === 'pending_approval' || o.status === 'approved_payment_pending').length}
+              {orders.filter(o => o.status === 'partial_paid').length}
             </div>
           </CardContent>
         </Card>
@@ -113,7 +202,7 @@ export function UserDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {orders.filter(o => o.status === 'delivered' || o.status === 'completed').length}
+              {orders.filter(o => o.status === 'paid' || o.status === 'completed').length}
             </div>
           </CardContent>
         </Card>
@@ -137,8 +226,92 @@ export function UserDashboard() {
         </CardContent>
       </Card>
 
+      <div className="flex gap-2 mb-6 flex-wrap">
+  <Button
+    variant={statusFilter === "all" ? "default" : "outline"}
+    onClick={() => setStatusFilter("all")}
+  >
+    All ({orders.length})
+  </Button>
+
+  <Button
+    variant={statusFilter === "paid" ? "default" : "outline"}
+    onClick={() => setStatusFilter("paid")}
+  >
+    Paid (
+    {orders.filter(
+      (o) => o.status === "paid"
+    ).length}
+    )
+  </Button>
+
+  <Button
+    variant={
+      statusFilter === "partial_paid"
+        ? "default"
+        : "outline"
+    }
+    onClick={() =>
+      setStatusFilter("partial_paid")
+    }
+  >
+    Partial Paid (
+    {orders.filter(
+      (o) => o.status === "partial_paid"
+    ).length}
+    )
+  </Button>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+
+  <div>
+    <label className="text-sm font-medium">
+      From Date
+    </label>
+
+    <input
+      type="date"
+      value={fromDate}
+      onChange={(e) =>
+        setFromDate(e.target.value)
+      }
+      className="w-full border rounded-md px-3 py-2"
+    />
+  </div>
+
+  <div>
+    <label className="text-sm font-medium">
+      To Date
+    </label>
+
+    <input
+      type="date"
+      value={toDate}
+      onChange={(e) =>
+        setToDate(e.target.value)
+      }
+      className="w-full border rounded-md px-3 py-2"
+    />
+  </div>
+
+  <div className="flex items-end">
+    <Button
+      variant="outline"
+      onClick={() => {
+        setFromDate("");
+        setToDate("");
+        setStatusFilter("all");
+      }}
+    >
+      Clear Filters
+    </Button>
+  </div>
+
+</div>
+
       {/* Orders List */}
-      {orders.length === 0 ? (
+      {filteredOrders.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Package className="h-16 w-16 text-gray-400 mb-4" />
@@ -153,7 +326,7 @@ export function UserDashboard() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {filteredOrders.map((order) => (
             <Card key={order.id} className="hover:shadow-md transition">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -164,13 +337,21 @@ export function UserDashboard() {
                     <div className="flex gap-2 items-center flex-wrap">
                       {getStatusBadge(order.status)}
                       <span className="text-sm text-gray-600">
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        {new Date(order.created_at).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <div className="text-right">
+                 
+                  <div className="text-sm text-gray-600">
+  Paid: Rs. {(order.paid_amount || 0).toFixed(2)}
+</div>
+
+<div className="text-sm text-red-600">
+  Pending: Rs. {(order.pending_amount || 0).toFixed(2)}
+</div>
+ <div className="text-right">
                     <div className="text-2xl font-bold text-orange-600">
-                      Rs. {order.totalAmount?.toFixed(2)}
+                      Rs. {order.total_amount?.toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -178,12 +359,59 @@ export function UserDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {/* Items Summary */}
+                  {/* Customer Information */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm border-b pb-3">
+  <div>
+    <span className="font-semibold text-gray-600">
+      Customer Name:
+    </span>{" "}
+    {order.customer_name || order.customerName}
+  </div>
+
+  <div>
+    <span className="font-semibold text-gray-600">
+      Phone:
+    </span>{" "}
+    {order.customer_phone || order.customerPhone}
+  </div>
+
+ {/* {order.customer_email && <div>
+    <span className="font-semibold text-gray-600">
+      Email:
+    </span>{" "}
+    {order.customer_email || order.customerEmail}
+  </div>} */}
+
+  <div className="md:col-span-2">
+    <span className="font-semibold text-gray-600">
+      Address:
+    </span>{" "}
+    {order.customer_address || order.customerAddress}
+  </div>
+</div>
                   <div>
                     <span className="text-sm font-semibold">Items:</span>
                     <div className="mt-1 space-y-1">
                       {order.items?.map((item: any, idx: number) => (
                         <div key={idx} className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                          {item.productName} - {item.size}" × {item.quantity}
+                         {item.productName}
+
+{item.category && (
+  <span>
+    {" "}
+    | {item.category}
+  </span>
+)}
+
+{item.size && (
+  <span>
+    {" "}
+    | {item.size}"
+  </span>
+)}
+
+{" × "}
+{item.quantity}
                         </div>
                       ))}
                     </div>
@@ -217,14 +445,14 @@ export function UserDashboard() {
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-2 pt-3 border-t">
-                    <Link to={`/orders/${order.id}`}>
+                    {/* <Link to={`/orders/${order.id}`}>
                       <Button size="sm" variant="outline">
                         <Eye className="h-4 w-4 mr-1" />
                         Track Order
                       </Button>
-                    </Link>
+                    </Link> */}
 
-                    {(order.status === 'paid' || order.status === 'admin_approved' || order.status === 'delivered' || order.status === 'completed') && (
+                    {(order.status === 'paid' || order.status === 'admin_approved' || order.status === 'delivered' || order.status === 'completed' || order.status === 'partial_paid') && (
                       <Button
                         size="sm"
                         onClick={() => handleGenerateInvoice(order)}

@@ -16,6 +16,7 @@ import { NotFound } from "./components/NotFound";
 import { AuthCallback } from "./components/AuthCallback";
 import {Cart} from "./components/Cart"
 import {Checkout} from "./components/Checkout"
+import { OrderSuccess } from "./components/OrderSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -37,7 +38,8 @@ export const router = createBrowserRouter([
       { path: "*", Component: NotFound },
       { path: "auth/callback", Component: AuthCallback },
        { path: "cart", Component: Cart },
-        { path: "cart-checkout", Component: Checkout }
+        { path: "cart-checkout", Component: Checkout },
+         { path: "order-success", Component: OrderSuccess },
     ],
   },
 ]);

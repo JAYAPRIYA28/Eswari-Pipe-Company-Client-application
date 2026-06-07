@@ -27,6 +27,8 @@ export function Cart() {
     clearCart,
   } = useCart();
 
+  console.log("cart", cart)
+
   const total =
     cart.reduce(
       (acc, item) =>
@@ -68,6 +70,8 @@ export function Cart() {
 
         return;
       }
+
+      console.log("cart",cart)
 
       // GO TO CHECKOUT PAGE
       // PASS FULL CART DATA

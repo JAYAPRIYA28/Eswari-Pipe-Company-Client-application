@@ -40,43 +40,52 @@ export function CartProvider({
     useState<CartItem[]>([]);
 
   // ADD TO CART
-  function addToCart(product: any) {
+function addToCart(product: any) {
+  setCart((prev) => {
+    const existing = prev.find(
+      (item) =>
+        item.id === product.id &&
+        item.size === (product.sizes?.[0] || "")
+    );
 
-    setCart((prev) => {
+    if (existing) {
+      return prev.map((item) =>
+        item.id === product.id &&
+        item.size === (product.sizes?.[0] || "")
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item
+      );
+    }
 
-      const existing =
-        prev.find(
-          (item) =>
-            item.id === product.id
-        );
+    return [
+      ...prev,
+      {
+        id: product.id,
+        name: product.name,
 
-      if (existing) {
+        category: product.category,
 
-        return prev.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity:
-                  item.quantity + 1,
-              }
-            : item
-        );
-      }
+        size:
+          product.sizes?.[0] || "",
 
-      return [
-        ...prev,
-        {
-          id: product.id,
-          name: product.name,
-          price:
-            product.basePrice || 0,
-          imageUrl:
-            product.imageUrl,
-          quantity: 1,
-        },
-      ];
-    });
-  }
+        price:
+          product.pricing?.[
+            product.sizes?.[0]
+          ] ||
+          product.basePrice ||
+          0,
+
+        imageUrl:
+          product.imageUrl,
+
+        quantity: 1,
+      },
+    ];
+  });
+}
 
   // REMOVE
   function removeFromCart(

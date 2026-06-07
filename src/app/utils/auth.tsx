@@ -5,6 +5,8 @@ import {
 const API_URL =
   "https://eswari-pipe-company-server-application.onrender.com";
 
+// const API_URL = "http://localhost:3000";
+
 // SUPABASE
 const supabaseUrl =
   "https://fjubpeowqjzgpwiaujwo.supabase.co";
